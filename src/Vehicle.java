@@ -19,15 +19,8 @@ public abstract class Vehicle {
 
     }
 
-    //abstract methods
-    /*
-    abstract void move(double distance) throws InvalidOperationException{
-        if (distance < 0){
-            throw new InvalidOperationException;
-        }
-    };
-     */
 
+    abstract void move(double distance) throws InvalidOperationException;
     abstract double calculateFuelEfficiency();
     abstract double estimateJourneyTime(double distance);
 

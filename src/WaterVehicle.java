@@ -12,4 +12,7 @@ public abstract class WaterVehicle extends Vehicle {
         return 1.15*(distance/super.getMaxSpeed());
     }
 
+    boolean hasSail(){
+        return hasSail;
+    }
 }
