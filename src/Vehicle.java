@@ -1,4 +1,4 @@
-public abstract class Vehicle {
+public abstract class Vehicle implements Comparable<Vehicle>{
     private String id;
     private String model;
     private double maxSpeed;
@@ -19,6 +19,18 @@ public abstract class Vehicle {
 
     }
 
+    @Override
+    public int compareTo(Vehicle v) {
+        if (this.calculateFuelEfficiency() > v.calculateFuelEfficiency()) {
+            return 1;
+        }
+        else if (this.calculateFuelEfficiency() < v.calculateFuelEfficiency()) {
+            return -1;
+        }
+        else {
+            return 0;
+        }
+    }
 
     abstract void move(double distance) throws InvalidOperationException;
     abstract double calculateFuelEfficiency();
