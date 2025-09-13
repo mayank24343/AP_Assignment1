@@ -1,4 +1,8 @@
-public class Bus extends LandVehicle implements FuelConsumable,PassengerCarrier,CargoCarrier,Maintainable{
+package Vehicles;
+import Exceptions.*;
+import Interfaces.*;
+
+public class Bus extends LandVehicle implements FuelConsumable, PassengerCarrier, CargoCarrier, Maintainable {
     //properties
     private double fuelLevel;
     private int passengerCapacity = 50;
@@ -8,7 +12,7 @@ public class Bus extends LandVehicle implements FuelConsumable,PassengerCarrier,
     private boolean maintenanceNeeded = false;
 
     //constructor
-    Bus(String id, String model, double maxSpeed, double currentMileage, int numWheels, double fuelLevel, double cargoCapacity, double currentCargo, boolean maintenanceNeeded, int passengerCapacity, int currentPassengers) {
+    public Bus(String id, String model, double maxSpeed, double currentMileage, int numWheels, double fuelLevel, double cargoCapacity, double currentCargo, int passengerCapacity, int currentPassengers) {
         super(id, model, maxSpeed, currentMileage, numWheels);
         this.fuelLevel = fuelLevel;
         this.passengerCapacity = passengerCapacity;
@@ -20,7 +24,7 @@ public class Bus extends LandVehicle implements FuelConsumable,PassengerCarrier,
         }
     }
     @Override
-    public void move(double distance) throws InvalidOperationException{
+    public void move(double distance) throws InvalidOperationException {
         if (distance < 0) {
             throw new InvalidOperationException("Negative distance.");
         }
@@ -31,7 +35,7 @@ public class Bus extends LandVehicle implements FuelConsumable,PassengerCarrier,
     }
 
     @Override
-    double calculateFuelEfficiency() {
+    public double calculateFuelEfficiency() {
         return 10.0;
     }
 
@@ -130,5 +134,10 @@ public class Bus extends LandVehicle implements FuelConsumable,PassengerCarrier,
     @Override
     public int getCurrentPassengers() {
         return currentPassengers;
+    }
+
+    @Override
+    public String toCSV(){
+        return String.format("Bus,%s,%s,%f,%f,%d,%f,%d,%d,%f,%f,%b",super.getId(),super.getModel(),super.getMaxSpeed(),super.getCurrentMileage(),super.getNumWheels(),fuelLevel,passengerCapacity,currentPassengers,cargoCapacity,currentCargo,maintenanceNeeded);//id,model,maxspeed,mileage,numwheels,fuellevel,passnegercapacity,currentpassengers,cargocapacity,currentcargo,maintenanceneeded
     }
 }

@@ -1,11 +1,17 @@
-public class CargoShip extends WaterVehicle implements CargoCarrier, Maintainable, FuelConsumable{
+package Vehicles;
+
+import Exceptions.*;
+import Interfaces.*;
+
+
+public class CargoShip extends WaterVehicle implements CargoCarrier, Maintainable, FuelConsumable {
     private double currentCargo;
     private double cargoCapacity = 50000;
     private boolean maintenanceNeeded = false;
     private double fuelLevel = 0;
 
     //constructor
-    CargoShip(String id, String model, double maxspeed, double currentMileage, boolean hasSail, double cargoCapacity, double currentCargo, double fuelLevel) {
+    public CargoShip(String id, String model, double maxspeed, double currentMileage, boolean hasSail, double fuelLevel, double cargoCapacity, double currentCargo) {
         super(id,model,maxspeed,currentMileage,hasSail);
         this.cargoCapacity = cargoCapacity;
         this.currentCargo = currentCargo;
@@ -96,7 +102,7 @@ public class CargoShip extends WaterVehicle implements CargoCarrier, Maintainabl
     }
 
     @Override
-    void move(double distance) throws InvalidOperationException {
+    public void move(double distance) throws InvalidOperationException {
         if (distance < 0){
             throw new InvalidOperationException("Distance must be greater than 0.");
         }
@@ -109,10 +115,15 @@ public class CargoShip extends WaterVehicle implements CargoCarrier, Maintainabl
     }
 
     @Override
-    double calculateFuelEfficiency() {
+    public double calculateFuelEfficiency() {
         if (hasSail()){
             return 0;
         }
         return 4.0;
+    }
+
+    @Override
+    public String toCSV(){
+        return String.format("Cargoship,%s,%s,%f,%f,%b,%f,%f,%f,%b",super.getId(),super.getModel(),super.getMaxSpeed(),super.getCurrentMileage(),super.hasSail(),fuelLevel,cargoCapacity,currentCargo,maintenanceNeeded);//id,model,maxspeed,mileage,hasSail,fuellevel,cargocapacity,currentcargo,maintenanceneeded
     }
 }

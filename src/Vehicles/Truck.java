@@ -1,4 +1,8 @@
-public class Truck extends LandVehicle implements FuelConsumable, CargoCarrier, Maintainable{
+package Vehicles;
+import Exceptions.*;
+import Interfaces.*;
+
+public class Truck extends LandVehicle implements FuelConsumable, CargoCarrier, Maintainable {
     //properties
     private double fuelLevel;
     private double cargoCapacity = 5000;
@@ -6,7 +10,7 @@ public class Truck extends LandVehicle implements FuelConsumable, CargoCarrier, 
     private boolean maintenanceNeeded = false;
 
     //constructor
-    Truck(String id, String model, double maxSpeed, double currentMileage, int numWheels, double fuelLevel, double cargoCapacity, double currentCargo, boolean maintenanceNeeded) {
+    public Truck(String id, String model, double maxSpeed, double currentMileage, int numWheels, double fuelLevel, double cargoCapacity, double currentCargo) {
         super(id, model, maxSpeed, currentMileage, numWheels);
         this.fuelLevel = fuelLevel;
         this.cargoCapacity = cargoCapacity;
@@ -17,7 +21,7 @@ public class Truck extends LandVehicle implements FuelConsumable, CargoCarrier, 
     }
 
     @Override
-    void move (double distance) throws InvalidOperationException {
+    public void move (double distance) throws InvalidOperationException {
         if (distance < 0){
             throw new InvalidOperationException("Distance cannot be negative.");
         }
@@ -28,7 +32,7 @@ public class Truck extends LandVehicle implements FuelConsumable, CargoCarrier, 
     }
 
     @Override
-    double calculateFuelEfficiency() {
+    public double calculateFuelEfficiency() {
         if (currentCargo/cargoCapacity > 0.5){
             return 8.0 - 0.1*8.0; //reduce efficiency by 10% in case of 50%+ cargo
         }
@@ -36,7 +40,7 @@ public class Truck extends LandVehicle implements FuelConsumable, CargoCarrier, 
     }
 
     @Override
-    public void loadCargo(double weight) throws OverloadException{
+    public void loadCargo(double weight) throws OverloadException {
         if (weight > cargoCapacity - currentCargo){
             throw new OverloadException("Capacity exceeded");
         }
@@ -101,5 +105,10 @@ public class Truck extends LandVehicle implements FuelConsumable, CargoCarrier, 
         maintenanceNeeded = false;
         setCurrentMileage(0);
         System.out.println("Maintenance scheduled.");
+    }
+
+    @Override
+    public String toCSV(){
+        return String.format("Truck,%s,%s,%f,%f,%d,%f,%f,%f,%b",super.getId(),super.getModel(),super.getMaxSpeed(),super.getCurrentMileage(),super.getNumWheels(),fuelLevel,cargoCapacity,currentCargo,maintenanceNeeded);//id,model,maxspeed,mileage,numwheels,fuellevel,cargocapacity,currentcargo,maintenanceneeded
     }
 }

@@ -1,4 +1,8 @@
-public class Airplane extends AirVehicle implements FuelConsumable, PassengerCarrier, CargoCarrier, Maintainable{
+package Vehicles;
+import Exceptions.*;
+import Interfaces.*;
+
+public class Airplane extends AirVehicle implements FuelConsumable, PassengerCarrier, CargoCarrier, Maintainable {
     private double fuelLevel;
     private int passengerCapacity = 200;
     private int currentPassengers;
@@ -7,7 +11,7 @@ public class Airplane extends AirVehicle implements FuelConsumable, PassengerCar
     private boolean maintenanceNeeded = false;
 
     //constructor
-    Airplane(String id, String model, double maxspeed, double currentMileage, double maxAltitude, double fuelLevel, double cargoCapacity, double currentCargo, int passengerCapacity, int currentPassengers, boolean maintenanceNeeded ) {
+    public Airplane(String id, String model, double maxspeed, double currentMileage, double maxAltitude, double fuelLevel, double cargoCapacity, double currentCargo, int passengerCapacity, int currentPassengers) {
         super(id,model,maxspeed,currentMileage,maxAltitude);
         this.fuelLevel = fuelLevel;
         this.passengerCapacity = passengerCapacity;
@@ -20,7 +24,7 @@ public class Airplane extends AirVehicle implements FuelConsumable, PassengerCar
     }
 
     @Override
-    public void move(double distance) throws InvalidOperationException{
+    public void move(double distance) throws InvalidOperationException {
         if (distance < 0){
             throw new InvalidOperationException("Negative distance.");
         }
@@ -129,7 +133,12 @@ public class Airplane extends AirVehicle implements FuelConsumable, PassengerCar
     }
 
     @Override
-    double calculateFuelEfficiency() {
+    public double calculateFuelEfficiency() {
         return 5.0;
+    }
+
+    @Override
+    public String toCSV(){
+        return String.format("Airplane,%s,%s,%f,%f,%f,%f,%d,%d,%f,%f,%b",super.getId(),super.getModel(),super.getMaxSpeed(),super.getCurrentMileage(),super.getMaxAltitude(),fuelLevel,passengerCapacity,currentPassengers,cargoCapacity,currentCargo,maintenanceNeeded);//id,model,maxspeed,mileage,maxaltitude,fuellevel,passnegercapacity,currentpassengers,cargocapacity,currentcargo,maintenanceneeded
     }
 }

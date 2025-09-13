@@ -1,4 +1,8 @@
-public class Car extends LandVehicle implements FuelConsumable, PassengerCarrier, Maintainable{
+package Vehicles;
+import Exceptions.*;
+import Interfaces.*;
+
+public class Car extends LandVehicle implements FuelConsumable, PassengerCarrier, Maintainable {
     //properties
     private double fuelLevel;
     private int passengerCapacity;
@@ -6,7 +10,7 @@ public class Car extends LandVehicle implements FuelConsumable, PassengerCarrier
     private boolean maintenanceNeeded = false;
 
     //constructor
-    Car(String id, String model, double maxSpeed, double currentMileage, int numWheels, double fuelLevel, int passengerCapacity, int currentPassengers) {
+    public Car(String id, String model, double maxSpeed, double currentMileage, int numWheels, double fuelLevel, int passengerCapacity, int currentPassengers) {
         super(id,model,maxSpeed,currentMileage,numWheels);
         this.fuelLevel = fuelLevel;
         this.passengerCapacity = passengerCapacity;
@@ -17,7 +21,7 @@ public class Car extends LandVehicle implements FuelConsumable, PassengerCarrier
     }
 
     @Override
-    public void move(double distance) throws InvalidOperationException{
+    public void move(double distance) throws InvalidOperationException {
         if (distance < 0) {
             throw new InvalidOperationException("Cannot move negative distance.");
         }
@@ -29,13 +33,13 @@ public class Car extends LandVehicle implements FuelConsumable, PassengerCarrier
     }
 
     @Override
-    double calculateFuelEfficiency() {
+    public double calculateFuelEfficiency() {
         return 15.0;
     }
 
-    //FuelConsumable Interface
+    //Interfaces.FuelConsumable Interface
     @Override
-    public void refuel(double amount) throws InvalidOperationException{
+    public void refuel(double amount) throws InvalidOperationException {
         if (amount <= 0){
             throw new InvalidOperationException("Amount must be greater than 0.");
         }
@@ -79,9 +83,9 @@ public class Car extends LandVehicle implements FuelConsumable, PassengerCarrier
         System.out.println("Maintenance is performed.");
     }
 
-    //PassengerCarrier Interface
+    //Interfaces.PassengerCarrier Interface
     @Override
-    public void boardPassengers(int count) throws OverloadException{
+    public void boardPassengers(int count) throws OverloadException {
         if (count + currentPassengers > passengerCapacity){
             throw new OverloadException("Cannot board more than max capacity.");
         }
@@ -104,5 +108,10 @@ public class Car extends LandVehicle implements FuelConsumable, PassengerCarrier
     @Override
     public int getCurrentPassengers() {
         return currentPassengers;
+    }
+
+    @Override
+    public String toCSV(){
+        return String.format("Car,%s,%s,%f,%f,%d,%f,%d,%d,%b",super.getId(),super.getModel(),super.getMaxSpeed(),super.getCurrentMileage(),super.getNumWheels(),fuelLevel,passengerCapacity,currentPassengers,maintenanceNeeded);//id,model,maxspeed,mileage,numwheels,fuellevel,passengercapacity,passengercargo,maintenanceneeded
     }
 }

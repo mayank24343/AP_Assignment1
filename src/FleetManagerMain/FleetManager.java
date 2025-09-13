@@ -1,16 +1,22 @@
-import java.security.InvalidParameterException;
+package FleetManagerMain;
+
+import Exceptions.*;
+import Interfaces.*;
+import Vehicles.*;
+
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 public class FleetManager {
-    private ArrayList<Vehicle> fleet;
+    private ArrayList<Vehicle> fleet = new ArrayList<>();
     FleetManager() {}
 
     void addVehicle(Vehicle v) {
         for (Vehicle vehicle : fleet) {
             if (vehicle.getId().compareTo(v.getId()) == 0){
-                throw new InvalidOperationException("Vehicle with this ID already exists.");
+                throw new InvalidOperationException("Vehicles.Vehicle with this ID already exists.");
             }
         }
         fleet.add(v);
@@ -24,7 +30,7 @@ public class FleetManager {
             }
         }
 
-        throw new InvalidOperationException("Vehicle with this ID has not been found.");
+        throw new InvalidOperationException("Vehicles.Vehicle with this ID has not been found.");
     }
 
     void maintainAll(){
@@ -111,5 +117,45 @@ public class FleetManager {
         }
 
         return vehicles;
+    }
+
+    void saveToFile(String filename){
+        try (FileWriter fw = new FileWriter(filename)){
+            for (Vehicle v : fleet) {
+                fw.write(v.toCSV());
+            }
+            System.out.printf("Saved Fleet Information to File %s%n",filename);
+        }
+        catch (IOException e){
+            System.out.println("Error writing to file");
+        }
+
+    }
+
+    void loadFromFile(String filename){
+        try (BufferedReader br = new BufferedReader(new FileReader(filename))){
+            String l = br.readLine();
+            while (l != null){
+                //create vehicle using factory method
+                Vehicle v = VehicleFactory.create(l);
+                addVehicle(v);
+                l = br.readLine();
+            }
+        }
+        catch (IOException e){
+            System.out.println("Error in loading file");
+        }
+    }
+
+    List<Vehicle>  getFleet(){
+        return fleet;
+    }
+
+    void refuelAll(double amount){
+        for (Vehicle v : fleet) {
+            if (v instanceof FuelConsumable){
+                ((FuelConsumable) v).refuel(amount);
+            }
+        }
     }
 }
