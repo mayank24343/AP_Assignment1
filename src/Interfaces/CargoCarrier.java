@@ -1,7 +1,6 @@
 package Interfaces;
 
-import Exceptions.InvalidOperationException;
-import Exceptions.OverloadException;
+import Exceptions.*;
 
 public interface CargoCarrier {
     void loadCargo(double weight) throws OverloadException;

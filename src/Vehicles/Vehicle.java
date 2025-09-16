@@ -19,10 +19,9 @@ public abstract class Vehicle implements Comparable<Vehicle>{
         else {
             throw new IllegalArgumentException("id is null or empty");
         }
-
-
     }
 
+    //comparable for sorting
     @Override
     public int compareTo(Vehicle v) {
         if (this.calculateFuelEfficiency() > v.calculateFuelEfficiency()) {
@@ -36,14 +35,16 @@ public abstract class Vehicle implements Comparable<Vehicle>{
         }
     }
 
+    //abstract functions
     public abstract void move(double distance) throws InvalidOperationException;
     public abstract double calculateFuelEfficiency();
-    public abstract double estimateJourneyTime(double distance);
+    public abstract double estimateJourneyTime(double distance) throws InvalidOperationException;
+    //function to convert to csv for persistence
     public abstract String toCSV();
 
-    //concrete methods
+    //concrete methods & getter/setter methods
     public void displayInfo(){
-        System.out.println();
+        System.out.printf("Vehicle ID: %s | Model: %s | Current Mileage: %.2f | Maximum Speed: %.2f\n", id, model, currentMileage, maxSpeed);
     }
 
     public double getCurrentMileage() {
@@ -68,4 +69,6 @@ public abstract class Vehicle implements Comparable<Vehicle>{
     public String getModel() {
         return model;
     }
+
+    //currently no requirement to reset maxspeed,model,id so no setter method
 }

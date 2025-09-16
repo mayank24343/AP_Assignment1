@@ -16,16 +16,18 @@ public class CargoShip extends WaterVehicle implements CargoCarrier, Maintainabl
         this.cargoCapacity = cargoCapacity;
         this.currentCargo = currentCargo;
         if (currentMileage > 10000) {
-            maintenanceNeeded = true;
+            scheduleMaintenance();
         }
         this.fuelLevel = fuelLevel;
     }
 
+    //concrete class - implement all abstract methods, interface methods
 
+    //CargoCarrier Interface
     @Override
     public void loadCargo(double weight) throws OverloadException {
         if (weight > cargoCapacity-currentCargo) {
-            throw new OverloadException("Weight limit esceeded.");
+            throw new OverloadException("Weight limit exceeded.");
         }
         currentCargo += weight;
     }
@@ -33,7 +35,7 @@ public class CargoShip extends WaterVehicle implements CargoCarrier, Maintainabl
     @Override
     public void unloadCargo(double weight) throws InvalidOperationException {
         if  (weight > currentCargo) {
-            throw new InvalidOperationException("cant unload more than load.");
+            throw new InvalidOperationException("Cant unload more than load.");
         }
         currentCargo -= weight;
     }
@@ -48,6 +50,7 @@ public class CargoShip extends WaterVehicle implements CargoCarrier, Maintainabl
         return currentCargo;
     }
 
+    //Fuel Consumable Interface
     @Override
     public void refuel(double amount) throws InsufficientFuelException, InvalidOperationException {
         if (!hasSail()){
@@ -83,6 +86,7 @@ public class CargoShip extends WaterVehicle implements CargoCarrier, Maintainabl
         return amount;
     }
 
+    //Maintainable Interface
     @Override
     public void scheduleMaintenance() {
         maintenanceNeeded = true;
@@ -111,7 +115,10 @@ public class CargoShip extends WaterVehicle implements CargoCarrier, Maintainabl
         }
 
         setCurrentMileage(getCurrentMileage() + distance);
-        System.out.println("Sailing with cargo.");
+        if (getCurrentMileage() > 10000){
+            scheduleMaintenance();
+        }
+        System.out.println("Vehicle ID:"+this.getId()+": Sailing with cargo.");
     }
 
     @Override

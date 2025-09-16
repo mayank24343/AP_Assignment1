@@ -1,6 +1,5 @@
 package Vehicles;
 import Exceptions.*;
-import Interfaces.*;
 
 abstract public class AirVehicle extends Vehicle {
     private double maxAltitude;
@@ -11,13 +10,21 @@ abstract public class AirVehicle extends Vehicle {
         this.maxAltitude = maxAltitude;
     }
 
+    //abstract functions
     public abstract String toCSV();
+    public abstract void move(double distance) throws InvalidOperationException;
+    public abstract double calculateFuelEfficiency();
+
+    //getter for maximum altitude (no setter as max altitude won't change, also not required)
     public double getMaxAltitude() {
         return maxAltitude;
     }
 
     @Override
-    public double estimateJourneyTime(double distance){
+    public double estimateJourneyTime(double distance) throws InvalidOperationException {
+        if (distance < 0){
+            throw new InvalidOperationException("Distance cannot be negative.");
+        }
         return 0.95*(distance/super.getMaxSpeed());
     }
 }

@@ -16,10 +16,11 @@ public class Truck extends LandVehicle implements FuelConsumable, CargoCarrier, 
         this.cargoCapacity = cargoCapacity;
         this.currentCargo = currentCargo;
         if (getCurrentMileage() > 10000){
-            this.maintenanceNeeded = true;
+            scheduleMaintenance();
         }
     }
 
+    //concrete class - implement all abstract methods, interface methods
     @Override
     public void move (double distance) throws InvalidOperationException {
         if (distance < 0){
@@ -28,7 +29,10 @@ public class Truck extends LandVehicle implements FuelConsumable, CargoCarrier, 
 
         consumeFuel(distance);
         setCurrentMileage(getCurrentMileage()+distance);
-        System.out.println("Hauling cargo ...");
+        if (getCurrentMileage() > 10000){
+            scheduleMaintenance();
+        }
+        System.out.println("Vehicle ID:"+this.getId()+": Hauling cargo ...");
     }
 
     @Override
@@ -39,6 +43,7 @@ public class Truck extends LandVehicle implements FuelConsumable, CargoCarrier, 
         return 8.0;
     }
 
+    //CargoCarrier Interface
     @Override
     public void loadCargo(double weight) throws OverloadException {
         if (weight > cargoCapacity - currentCargo){
@@ -65,12 +70,12 @@ public class Truck extends LandVehicle implements FuelConsumable, CargoCarrier, 
         return currentCargo;
     }
 
+    //FuelConsumable Interface
     @Override
     public void refuel(double amount) throws InsufficientFuelException {
         if (amount <= 0) {
             throw new InsufficientFuelException("Amount must be greater than zero.");
         }
-
         fuelLevel += amount;
     }
 
@@ -89,6 +94,7 @@ public class Truck extends LandVehicle implements FuelConsumable, CargoCarrier, 
         return amount;
     }
 
+    //Maintainable Interface
     @Override
     public void scheduleMaintenance() {
         maintenanceNeeded = true;

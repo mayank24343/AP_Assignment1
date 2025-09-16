@@ -19,10 +19,11 @@ public class Airplane extends AirVehicle implements FuelConsumable, PassengerCar
         this.cargoCapacity = cargoCapacity;
         this.currentCargo = currentCargo;
         if (currentMileage > 10000) {
-            this.maintenanceNeeded = true;
+            scheduleMaintenance();
         }
     }
 
+    //concrete class - implement all abstract methods, interface methods
     @Override
     public void move(double distance) throws InvalidOperationException {
         if (distance < 0){
@@ -30,10 +31,13 @@ public class Airplane extends AirVehicle implements FuelConsumable, PassengerCar
         }
         consumeFuel(distance);
         setCurrentMileage(getCurrentMileage() + distance);
-        System.out.println("Flying at"+12000+" ...");
+        if (getCurrentMileage() > 10000){
+            scheduleMaintenance();
+        }
+        System.out.println("Vehicle ID:"+this.getId()+": Flying at"+getMaxAltitude()+" ...");
     }
 
-
+    //CargoCarrier Interface
     @Override
     public void loadCargo(double weight) throws OverloadException {
         if (weight > cargoCapacity-currentCargo) {
@@ -61,6 +65,7 @@ public class Airplane extends AirVehicle implements FuelConsumable, PassengerCar
         return currentCargo;
     }
 
+    //Fuel Consumable Interface
     @Override
     public void refuel(double amount) throws InsufficientFuelException {
         if (amount <= 0){
@@ -85,6 +90,7 @@ public class Airplane extends AirVehicle implements FuelConsumable, PassengerCar
         return amount;
     }
 
+    //Maintainable Interface
     @Override
     public void scheduleMaintenance() {
         maintenanceNeeded = true;
@@ -105,6 +111,7 @@ public class Airplane extends AirVehicle implements FuelConsumable, PassengerCar
 
     }
 
+    //Passenger Carrier Interface
     @Override
     public void boardPassengers(int count) throws OverloadException {
         if (count > passengerCapacity - currentPassengers) {

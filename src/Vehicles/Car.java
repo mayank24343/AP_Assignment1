@@ -16,9 +16,11 @@ public class Car extends LandVehicle implements FuelConsumable, PassengerCarrier
         this.passengerCapacity = passengerCapacity;
         this.currentPassengers = currentPassengers;
         if (currentMileage > 10000){
-            this.maintenanceNeeded = true;
+            scheduleMaintenance();
         }
     }
+
+    //concrete class - implement all abstract methods, interface methods
 
     @Override
     public void move(double distance) throws InvalidOperationException {
@@ -28,7 +30,10 @@ public class Car extends LandVehicle implements FuelConsumable, PassengerCarrier
         consumeFuel(distance);
 
         setCurrentMileage(getCurrentMileage()+distance);
-        System.out.println("Driving on road ...");
+        if (getCurrentMileage() > 10000){
+            scheduleMaintenance();
+        }
+        System.out.println("Vehicle ID:"+this.getId()+": Driving on road ...");
 
     }
 
@@ -37,7 +42,7 @@ public class Car extends LandVehicle implements FuelConsumable, PassengerCarrier
         return 15.0;
     }
 
-    //Interfaces.FuelConsumable Interface
+    //FuelConsumable Interface
     @Override
     public void refuel(double amount) throws InvalidOperationException {
         if (amount <= 0){
@@ -83,7 +88,7 @@ public class Car extends LandVehicle implements FuelConsumable, PassengerCarrier
         System.out.println("Maintenance is performed.");
     }
 
-    //Interfaces.PassengerCarrier Interface
+    //PassengerCarrier Interface
     @Override
     public void boardPassengers(int count) throws OverloadException {
         if (count + currentPassengers > passengerCapacity){

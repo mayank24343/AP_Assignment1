@@ -1,6 +1,6 @@
 package Interfaces;
 
-import Exceptions.InsufficientFuelException;
+import Exceptions.*;
 
 public interface FuelConsumable {
     void refuel(double amount) throws InsufficientFuelException;

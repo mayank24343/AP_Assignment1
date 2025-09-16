@@ -1,6 +1,6 @@
 package Vehicles;
 import Exceptions.*;
-import Interfaces.*;
+
 abstract public class LandVehicle extends Vehicle {
     private int numWheels;
 
@@ -11,16 +11,20 @@ abstract public class LandVehicle extends Vehicle {
     }
 
     //abstract methods
-    public abstract void move(double distance);
+    public abstract void move(double distance) throws InvalidOperationException;
     public abstract double calculateFuelEfficiency();
     public abstract String toCSV();
 
+    //getter method for number of wheels, setter not needed  right now (anyway number of wheels rarely changes)
     public int getNumWheels() {
         return numWheels;
     }
 
     @Override
-    public double estimateJourneyTime(double distance){
+    public double estimateJourneyTime(double distance) throws InvalidOperationException{
+        if (distance < 0){
+            throw new InvalidOperationException("Distance cannot be negative.");
+        }
         return 1.1*(distance/super.getMaxSpeed());
     }
 

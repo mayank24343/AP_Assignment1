@@ -5,18 +5,18 @@ import Interfaces.*;
 import Vehicles.*;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class FleetManager {
     private ArrayList<Vehicle> fleet = new ArrayList<>();
+
+    //constructor
     FleetManager() {}
 
     void addVehicle(Vehicle v) {
         for (Vehicle vehicle : fleet) {
             if (vehicle.getId().compareTo(v.getId()) == 0){
-                throw new InvalidOperationException("Vehicles.Vehicle with this ID already exists.");
+                throw new InvalidOperationException("Vehicle with this ID already exists.");
             }
         }
         fleet.add(v);
@@ -30,7 +30,7 @@ public class FleetManager {
             }
         }
 
-        throw new InvalidOperationException("Vehicles.Vehicle with this ID has not been found.");
+        throw new InvalidOperationException("Vehicle with this ID has not been found.");
     }
 
     void maintainAll(){
@@ -59,7 +59,7 @@ public class FleetManager {
         return totalFuelConsumption;
     }
 
-    List<Vehicle> searchByType( Class<?> type){
+    public List<Vehicle> searchByType( Class<?> type){
         List<Vehicle> vehicles = new ArrayList<>();
         for (Vehicle v : fleet) {
             if (type.isInstance(v)){
@@ -137,18 +137,19 @@ public class FleetManager {
             String l = br.readLine();
             while (l != null){
                 //create vehicle using factory method
-                Vehicle v = VehicleFactory.create(l);
-                addVehicle(v);
-                l = br.readLine();
+                try {
+                    Vehicle v = VehicleFactory.create(l);
+                    addVehicle(v);
+                    l = br.readLine();
+                }
+                catch (Exception e){
+                    System.out.println("Error reading from file-Data incorrect/not arranged as expected.");
+                }
             }
         }
         catch (IOException e){
             System.out.println("Error in loading file");
         }
-    }
-
-    List<Vehicle>  getFleet(){
-        return fleet;
     }
 
     void refuelAll(double amount){
