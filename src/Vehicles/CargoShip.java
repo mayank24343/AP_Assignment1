@@ -3,16 +3,21 @@ package Vehicles;
 import Exceptions.*;
 import Interfaces.*;
 
+import java.security.InvalidParameterException;
+
 
 public class CargoShip extends WaterVehicle implements CargoCarrier, Maintainable, FuelConsumable {
-    private double currentCargo;
+    private double currentCargo = 0;
     private double cargoCapacity = 50000;
     private boolean maintenanceNeeded = false;
     private double fuelLevel = 0;
 
     //constructor
-    public CargoShip(String id, String model, double maxspeed, double currentMileage, boolean hasSail, double fuelLevel, double cargoCapacity, double currentCargo) {
+    public CargoShip(String id, String model, double maxspeed, double currentMileage, boolean hasSail, double fuelLevel, double cargoCapacity, double currentCargo) throws InvalidOperationException {
         super(id,model,maxspeed,currentMileage,hasSail);
+        if (fuelLevel < 0 || maxspeed < 0 || currentCargo < 0 || cargoCapacity < 0  || currentMileage < 0) {
+            throw new InvalidOperationException("Invalid parameters");
+        }
         this.cargoCapacity = cargoCapacity;
         this.currentCargo = currentCargo;
         if (currentMileage > 10000) {
@@ -21,13 +26,28 @@ public class CargoShip extends WaterVehicle implements CargoCarrier, Maintainabl
         this.fuelLevel = fuelLevel;
     }
 
+    public CargoShip(String id, String model, double maxspeed, double currentMileage, boolean hasSail, double cargoCapacity) {
+        super(id,model,maxspeed,currentMileage,hasSail);
+        this.cargoCapacity = cargoCapacity;
+        if (currentMileage > 10000) {
+            scheduleMaintenance();
+        }
+    }
+
+    public CargoShip(String id, String model, double maxspeed, double currentMileage, boolean hasSail) {
+        super(id,model,maxspeed,currentMileage,hasSail);
+        if (currentMileage > 10000) {
+            scheduleMaintenance();
+        }
+    }
+
     //concrete class - implement all abstract methods, interface methods
 
     //CargoCarrier Interface
     @Override
     public void loadCargo(double weight) throws OverloadException {
         if (weight > cargoCapacity-currentCargo) {
-            throw new OverloadException("Weight limit exceeded.");
+            throw new OverloadException("Cargo weight limit exceeded.");
         }
         currentCargo += weight;
     }
@@ -35,7 +55,7 @@ public class CargoShip extends WaterVehicle implements CargoCarrier, Maintainabl
     @Override
     public void unloadCargo(double weight) throws InvalidOperationException {
         if  (weight > currentCargo) {
-            throw new InvalidOperationException("Cant unload more than load.");
+            throw new InvalidOperationException("Insufficient cargo to unload.");
         }
         currentCargo -= weight;
     }
@@ -53,20 +73,20 @@ public class CargoShip extends WaterVehicle implements CargoCarrier, Maintainabl
     //Fuel Consumable Interface
     @Override
     public void refuel(double amount) throws InsufficientFuelException, InvalidOperationException {
-        if (!hasSail()){
+        if (!getHasSail()){
             if (amount <= 0){
-                throw new InsufficientFuelException("Amount must be greater than 0.");
+                throw new InsufficientFuelException("Refuel amount must be greater than 0.");
             }
             fuelLevel += amount;
         }
         else{
-            throw new InvalidOperationException("Can't refuel ship which uses sail.");
+            throw new InvalidOperationException("Ship doesn't use fuel. Uses sail.");
         }
     }
 
     @Override
     public double getFuelLevel() throws InvalidOperationException {
-        if (!hasSail()){
+        if (!getHasSail()){
             throw new InvalidOperationException("Ship doesn't use fuel. Uses sail.");
         }
         return fuelLevel;
@@ -74,7 +94,7 @@ public class CargoShip extends WaterVehicle implements CargoCarrier, Maintainabl
 
     @Override
     public double consumeFuel(double distance) throws InsufficientFuelException, InvalidOperationException {
-        if (!hasSail()){
+        if (!getHasSail()){
             throw new InvalidOperationException("Ship doesn't use fuel. Uses sail.");
         }
 
@@ -90,7 +110,7 @@ public class CargoShip extends WaterVehicle implements CargoCarrier, Maintainabl
     @Override
     public void scheduleMaintenance() {
         maintenanceNeeded = true;
-        System.out.println("Maintenance scheduled.");
+        System.out.println("Vehicle ID:"+this.getId()+": Maintenance scheduled.");
     }
 
     @Override
@@ -102,15 +122,15 @@ public class CargoShip extends WaterVehicle implements CargoCarrier, Maintainabl
     public void performMaintenance() {
         maintenanceNeeded = false;
         setCurrentMileage(0);
-        System.out.println("Maintenance performed.");
+        System.out.println("Vehicle ID:"+this.getId()+": Maintenance performed.");
     }
 
     @Override
     public void move(double distance) throws InvalidOperationException {
         if (distance < 0){
-            throw new InvalidOperationException("Distance must be greater than 0.");
+            throw new InvalidOperationException("Negative distance.");
         }
-        if (!hasSail()){
+        if (!getHasSail()){
             consumeFuel(distance);
         }
 
@@ -123,7 +143,7 @@ public class CargoShip extends WaterVehicle implements CargoCarrier, Maintainabl
 
     @Override
     public double calculateFuelEfficiency() {
-        if (hasSail()){
+        if (getHasSail()){
             return 0;
         }
         return 4.0;
@@ -131,6 +151,6 @@ public class CargoShip extends WaterVehicle implements CargoCarrier, Maintainabl
 
     @Override
     public String toCSV(){
-        return String.format("Cargoship,%s,%s,%f,%f,%b,%f,%f,%f,%b",super.getId(),super.getModel(),super.getMaxSpeed(),super.getCurrentMileage(),super.hasSail(),fuelLevel,cargoCapacity,currentCargo,maintenanceNeeded);//id,model,maxspeed,mileage,hasSail,fuellevel,cargocapacity,currentcargo,maintenanceneeded
+        return String.format("Cargoship,%s,%s,%f,%f,%b,%f,%f,%f,%b\n",super.getId(),super.getModel(),super.getMaxSpeed(),super.getCurrentMileage(),getHasSail(),fuelLevel,cargoCapacity,currentCargo,maintenanceNeeded);//id,model,maxspeed,mileage,hasSail,fuellevel,cargocapacity,currentcargo,maintenanceneeded
     }
 }

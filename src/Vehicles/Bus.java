@@ -4,21 +4,40 @@ import Interfaces.*;
 
 public class Bus extends LandVehicle implements FuelConsumable, PassengerCarrier, CargoCarrier, Maintainable {
     //properties
-    private double fuelLevel;
+    private double fuelLevel = 0;
     private int passengerCapacity = 50;
-    private int currentPassengers;
+    private int currentPassengers = 0;
     private double cargoCapacity = 500;
-    private double currentCargo;
+    private double currentCargo = 0;
     private boolean maintenanceNeeded = false;
 
     //constructor
-    public Bus(String id, String model, double maxSpeed, double currentMileage, int numWheels, double fuelLevel, double cargoCapacity, double currentCargo, int passengerCapacity, int currentPassengers) {
+    public Bus(String id, String model, double maxSpeed, double currentMileage, int numWheels, double fuelLevel, double cargoCapacity, double currentCargo, int passengerCapacity, int currentPassengers) throws InvalidOperationException{
         super(id, model, maxSpeed, currentMileage, numWheels);
+        if (fuelLevel < 0 || maxSpeed < 0 || currentCargo < 0 || cargoCapacity < 0  || numWheels < 4 || currentMileage < 0 || passengerCapacity < 0 || currentPassengers < 0) {
+            throw new InvalidOperationException("Invalid parameters");
+        }
         this.fuelLevel = fuelLevel;
         this.passengerCapacity = passengerCapacity;
         this.currentPassengers = currentPassengers;
         this.cargoCapacity = cargoCapacity;
         this.currentCargo = currentCargo;
+        if (currentMileage > 10000) {
+            scheduleMaintenance();
+        }
+    }
+
+    public Bus(String id, String model, double maxSpeed, double currentMileage, int numWheels, double cargoCapacity, int passengerCapacity) {
+        super(id, model, maxSpeed, currentMileage, numWheels);
+        this.passengerCapacity = passengerCapacity;
+        this.cargoCapacity = cargoCapacity;
+        if (currentMileage > 10000) {
+            scheduleMaintenance();
+        }
+    }
+
+    public Bus(String id, String model, double maxSpeed, double currentMileage, int numWheels) {
+        super(id, model, maxSpeed, currentMileage, numWheels);
         if (currentMileage > 10000) {
             scheduleMaintenance();
         }
@@ -48,7 +67,7 @@ public class Bus extends LandVehicle implements FuelConsumable, PassengerCarrier
     @Override
     public void loadCargo(double weight) throws OverloadException {
         if (weight > cargoCapacity-currentCargo) {
-            throw new OverloadException("Cargo Limit Exceeded.");
+            throw new OverloadException("Cargo weight limit exceeded.");
         }
         currentCargo += weight;
     }
@@ -56,7 +75,7 @@ public class Bus extends LandVehicle implements FuelConsumable, PassengerCarrier
     @Override
     public void unloadCargo(double weight) throws InvalidOperationException {
         if (weight > currentCargo) {
-            throw new InvalidOperationException("Unloading Cargo Limit Exceeded.");
+            throw new InvalidOperationException("Insufficient cargo to unload.");
         }
 
         currentCargo -= weight;
@@ -76,7 +95,7 @@ public class Bus extends LandVehicle implements FuelConsumable, PassengerCarrier
     @Override
     public void refuel(double amount) throws InsufficientFuelException {
         if (amount <= 0){
-            throw new InsufficientFuelException("Amount must be greater than 0.");
+            throw new InsufficientFuelException("Refuel amount must be greater than 0.");
         }
 
         fuelLevel += amount;
@@ -91,7 +110,7 @@ public class Bus extends LandVehicle implements FuelConsumable, PassengerCarrier
     public double consumeFuel(double distance) throws InsufficientFuelException {
         double amount = distance/calculateFuelEfficiency();
         if (fuelLevel < amount) {
-            throw new InsufficientFuelException("Fuel Limit Exceeded.");
+            throw new InsufficientFuelException("Insufficient fuel.");
         }
 
         fuelLevel -= amount;
@@ -102,7 +121,7 @@ public class Bus extends LandVehicle implements FuelConsumable, PassengerCarrier
     @Override
     public void scheduleMaintenance() {
         maintenanceNeeded = true;
-        System.out.println("Maintenance scheduled.");
+        System.out.println("Vehicle ID:"+this.getId()+": Maintenance scheduled.");
     }
 
     @Override
@@ -114,7 +133,7 @@ public class Bus extends LandVehicle implements FuelConsumable, PassengerCarrier
     public void performMaintenance() {
         maintenanceNeeded = false;
         setCurrentMileage(0);
-        System.out.println("Maintenance performed.");
+        System.out.println("Vehicle ID:"+this.getId()+": Maintenance performed.");
     }
 
     //Passenger Carrier Interface
@@ -129,7 +148,7 @@ public class Bus extends LandVehicle implements FuelConsumable, PassengerCarrier
     @Override
     public void disembarkPassengers(int count) throws InvalidOperationException {
         if (count > currentPassengers) {
-            throw new InvalidOperationException("Not enough passengers.");
+            throw new InvalidOperationException("Insufficient passengers to disembark.");
         }
 
         currentPassengers -= count;
@@ -147,6 +166,6 @@ public class Bus extends LandVehicle implements FuelConsumable, PassengerCarrier
 
     @Override
     public String toCSV(){
-        return String.format("Bus,%s,%s,%f,%f,%d,%f,%d,%d,%f,%f,%b",super.getId(),super.getModel(),super.getMaxSpeed(),super.getCurrentMileage(),super.getNumWheels(),fuelLevel,passengerCapacity,currentPassengers,cargoCapacity,currentCargo,maintenanceNeeded);//id,model,maxspeed,mileage,numwheels,fuellevel,passnegercapacity,currentpassengers,cargocapacity,currentcargo,maintenanceneeded
+        return String.format("Bus,%s,%s,%f,%f,%d,%f,%d,%d,%f,%f,%b\n",super.getId(),super.getModel(),super.getMaxSpeed(),super.getCurrentMileage(),super.getNumWheels(),fuelLevel,passengerCapacity,currentPassengers,cargoCapacity,currentCargo,maintenanceNeeded);//id,model,maxspeed,mileage,numwheels,fuellevel,passnegercapacity,currentpassengers,cargocapacity,currentcargo,maintenanceneeded
     }
 }

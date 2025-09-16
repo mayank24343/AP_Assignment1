@@ -50,7 +50,7 @@ public class FleetManager {
     double getTotalFuelConsumption(double distance){
         double totalFuelConsumption = 0;
         for (Vehicle v : fleet) {
-            if ((v instanceof CargoShip) && ((CargoShip) v).hasSail()) {
+            if ((v instanceof CargoShip) && ((CargoShip) v).getHasSail()) {
                 continue;
             }
             totalFuelConsumption += ((FuelConsumable) v).consumeFuel(distance);
@@ -138,12 +138,12 @@ public class FleetManager {
             while (l != null){
                 //create vehicle using factory method
                 try {
-                    Vehicle v = VehicleFactory.create(l);
+                    Vehicle v = VehicleFactory.createFromCSV(l);
                     addVehicle(v);
                     l = br.readLine();
                 }
                 catch (Exception e){
-                    System.out.println("Error reading from file-Data incorrect/not arranged as expected.");
+                    System.out.println("Error reading from file-Data incorrect/not arranged as expected.\nError: "+e+"\n");
                 }
             }
         }

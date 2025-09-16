@@ -4,14 +4,17 @@ import Interfaces.*;
 
 public class Car extends LandVehicle implements FuelConsumable, PassengerCarrier, Maintainable {
     //properties
-    private double fuelLevel;
-    private int passengerCapacity;
-    private int currentPassengers;
+    private double fuelLevel = 0;
+    private int passengerCapacity = 5;
+    private int currentPassengers = 0;
     private boolean maintenanceNeeded = false;
 
     //constructor
-    public Car(String id, String model, double maxSpeed, double currentMileage, int numWheels, double fuelLevel, int passengerCapacity, int currentPassengers) {
+    public Car(String id, String model, double maxSpeed, double currentMileage, int numWheels, double fuelLevel, int passengerCapacity, int currentPassengers) throws InvalidOperationException {
         super(id,model,maxSpeed,currentMileage,numWheels);
+        if (fuelLevel < 0 || maxSpeed < 0 || numWheels < 4 || currentMileage < 0 || passengerCapacity < 0 || currentPassengers < 0) {
+            throw new InvalidOperationException("Invalid parameters");
+        }
         this.fuelLevel = fuelLevel;
         this.passengerCapacity = passengerCapacity;
         this.currentPassengers = currentPassengers;
@@ -20,20 +23,35 @@ public class Car extends LandVehicle implements FuelConsumable, PassengerCarrier
         }
     }
 
-    //concrete class - implement all abstract methods, interface methods
+    //constructor if passengers and fuel level not provided - these can default to zero, and be changed by refuel, and board/deboard methods
+    public Car(String id, String model, double maxSpeed, double currentMileage, int numWheels, int passengerCapacity){
+        super(id,model,maxSpeed,currentMileage,numWheels);
+        this.passengerCapacity = passengerCapacity;
+        if (currentMileage > 10000){
+            scheduleMaintenance();
+        }
+    }
 
+    public Car(String id, String model, double maxSpeed, double currentMileage, int numWheels){
+        super(id,model,maxSpeed,currentMileage,numWheels);
+        if (currentMileage > 10000){
+            scheduleMaintenance();
+        }
+    }
+
+    //concrete class - implement all abstract methods, interface methods
     @Override
     public void move(double distance) throws InvalidOperationException {
         if (distance < 0) {
-            throw new InvalidOperationException("Cannot move negative distance.");
+            throw new InvalidOperationException("Negative distance.");
         }
         consumeFuel(distance);
 
         setCurrentMileage(getCurrentMileage()+distance);
+        System.out.println("Vehicle ID:"+this.getId()+": Driving on road ...");
         if (getCurrentMileage() > 10000){
             scheduleMaintenance();
         }
-        System.out.println("Vehicle ID:"+this.getId()+": Driving on road ...");
 
     }
 
@@ -46,7 +64,7 @@ public class Car extends LandVehicle implements FuelConsumable, PassengerCarrier
     @Override
     public void refuel(double amount) throws InvalidOperationException {
         if (amount <= 0){
-            throw new InvalidOperationException("Amount must be greater than 0.");
+            throw new InvalidOperationException("Refuel amount must be greater than 0.");
         }
         fuelLevel += amount;
     }
@@ -60,7 +78,7 @@ public class Car extends LandVehicle implements FuelConsumable, PassengerCarrier
     public double consumeFuel(double distance) throws InsufficientFuelException {
         double amountConsumed = distance/calculateFuelEfficiency();
         if (fuelLevel < amountConsumed){
-            throw new InsufficientFuelException("Insufficient fuel to move distance.");
+            throw new InsufficientFuelException("Insufficient fuel.");
         }
         fuelLevel -= amountConsumed;
         return amountConsumed;
@@ -70,7 +88,7 @@ public class Car extends LandVehicle implements FuelConsumable, PassengerCarrier
     @Override
     public void scheduleMaintenance() {
         maintenanceNeeded = true;
-        System.out.println("Maintenance is scheduled.");
+        System.out.println("Vehicle ID: "+getId()+"| Maintenance is scheduled.");
     }
 
     @Override
@@ -85,14 +103,14 @@ public class Car extends LandVehicle implements FuelConsumable, PassengerCarrier
     public void performMaintenance() {
         maintenanceNeeded = false;
         setCurrentMileage(0);
-        System.out.println("Maintenance is performed.");
+        System.out.println("Vehicle ID: "+getId()+"| Maintenance is performed.");
     }
 
     //PassengerCarrier Interface
     @Override
     public void boardPassengers(int count) throws OverloadException {
         if (count + currentPassengers > passengerCapacity){
-            throw new OverloadException("Cannot board more than max capacity.");
+            throw new OverloadException("Passenger Limit Exceeded.");
         }
         currentPassengers += count;
     }
@@ -100,7 +118,7 @@ public class Car extends LandVehicle implements FuelConsumable, PassengerCarrier
     @Override
     public void disembarkPassengers(int count) throws InvalidOperationException {
         if (count > currentPassengers) {
-            throw new InvalidOperationException("Cannot disembark more passengers than in the vehicle.");
+            throw new InvalidOperationException("Insufficient passengers to disembark.");
         }
         currentPassengers-=count;
     }
@@ -117,6 +135,6 @@ public class Car extends LandVehicle implements FuelConsumable, PassengerCarrier
 
     @Override
     public String toCSV(){
-        return String.format("Car,%s,%s,%f,%f,%d,%f,%d,%d,%b",super.getId(),super.getModel(),super.getMaxSpeed(),super.getCurrentMileage(),super.getNumWheels(),fuelLevel,passengerCapacity,currentPassengers,maintenanceNeeded);//id,model,maxspeed,mileage,numwheels,fuellevel,passengercapacity,passengercargo,maintenanceneeded
+        return String.format("Car,%s,%s,%f,%f,%d,%f,%d,%d,%b\n",super.getId(),super.getModel(),super.getMaxSpeed(),super.getCurrentMileage(),super.getNumWheels(),fuelLevel,passengerCapacity,currentPassengers,maintenanceNeeded);//id,model,maxspeed,mileage,numwheels,fuellevel,passengercapacity,passengercargo,maintenanceneeded
     }
 }

@@ -8,8 +8,9 @@ import java.security.InvalidParameterException;
 public class VehicleFactory {
     VehicleFactory(){}
 
-     public static Vehicle create(String info){
+     public static Vehicle createFromCSV(String info){
         String[] attributes = info.split(",");
+        Vehicle v = null;
         if (attributes.length == 10 || attributes.length == 12){
           if (attributes[0].trim().equals("Car")) {
                for (int i = 1; i < 10; i++){
@@ -17,8 +18,12 @@ public class VehicleFactory {
                        throw new InvalidOperationException("Empty Attributes.");
                    }
                }
-               Vehicle v = new Car(attributes[1], attributes[2], Double.parseDouble(attributes[3]), Double.parseDouble(attributes[4]), Integer.parseInt(attributes[5]), Double.parseDouble(attributes[6]), Integer.parseInt(attributes[7]), Integer.parseInt(attributes[8]));
-               return v;
+               try {
+                   v = new Car(attributes[1], attributes[2], Double.parseDouble(attributes[3]), Double.parseDouble(attributes[4]), Integer.parseInt(attributes[5]), Double.parseDouble(attributes[6]), Integer.parseInt(attributes[7]), Integer.parseInt(attributes[8]));
+               }
+               catch (Exception e){
+                   System.out.println("Invalid attributes while parsing file.\nError: " + e);
+               }
           }
           else if (attributes[0].trim().equals("Bus")) {
               for (int i = 1; i < 12; i++){
@@ -26,8 +31,12 @@ public class VehicleFactory {
                       throw new InvalidOperationException("Empty Attributes.");
                   }
               }
-              Vehicle v = new Bus(attributes[1], attributes[2], Double.parseDouble(attributes[3]), Double.parseDouble(attributes[4]), Integer.parseInt(attributes[5]), Double.parseDouble(attributes[6]), Double.parseDouble(attributes[7]), Double.parseDouble(attributes[8]), Integer.parseInt(attributes[9]), Integer.parseInt(attributes[10]));
-              return v;
+              try {
+                  v = new Bus(attributes[1], attributes[2], Double.parseDouble(attributes[3]), Double.parseDouble(attributes[4]), Integer.parseInt(attributes[5]), Double.parseDouble(attributes[6]), Double.parseDouble(attributes[7]), Double.parseDouble(attributes[8]), Integer.parseInt(attributes[9]), Integer.parseInt(attributes[10]));
+              }
+              catch (Exception e){
+                  System.out.println("Invalid attributes while parsing file.\nError: " + e);
+              }
 
           }
           else if (attributes[0].trim().equals("Truck")) {
@@ -36,8 +45,12 @@ public class VehicleFactory {
                       throw new InvalidOperationException("Empty Attributes.");
                   }
               }
-              Vehicle v = new Truck(attributes[1], attributes[2], Double.parseDouble(attributes[3]), Double.parseDouble(attributes[4]), Integer.parseInt(attributes[5]), Double.parseDouble(attributes[6]), Double.parseDouble(attributes[7]), Double.parseDouble(attributes[8]));
-              return v;
+              try {
+                  v = new Truck(attributes[1], attributes[2], Double.parseDouble(attributes[3]), Double.parseDouble(attributes[4]), Integer.parseInt(attributes[5]), Double.parseDouble(attributes[6]), Double.parseDouble(attributes[7]), Double.parseDouble(attributes[8]));
+              }
+              catch (Exception e){
+                System.out.println("Invalid attributes while parsing file.\nError: " + e);
+            }
           }
           else if  (attributes[0].trim().equals("Cargoship")) {
               for (int i = 1; i < 10; i++){
@@ -45,8 +58,12 @@ public class VehicleFactory {
                       throw new InvalidOperationException("Empty Attributes.");
                   }
               }
-              Vehicle v = new CargoShip(attributes[1], attributes[2], Double.parseDouble(attributes[3]), Double.parseDouble(attributes[4]), Boolean.parseBoolean(attributes[5]), Double.parseDouble(attributes[6]), Double.parseDouble(attributes[7]), Double.parseDouble(attributes[8]));
-              return v;
+              try {
+                  v = new CargoShip(attributes[1], attributes[2], Double.parseDouble(attributes[3]), Double.parseDouble(attributes[4]), Boolean.parseBoolean(attributes[5]), Double.parseDouble(attributes[6]), Double.parseDouble(attributes[7]), Double.parseDouble(attributes[8]));
+              }
+              catch (Exception e){
+                  System.out.println("Invalid attributes while parsing file.\nError: " + e);
+              }
           }
           else if (attributes[0].trim().equals("Airplane")) {
               for (int i = 1; i < 12; i++){
@@ -54,8 +71,12 @@ public class VehicleFactory {
                       throw new InvalidOperationException("Empty Attributes.");
                   }
               }
-              Vehicle v = new Airplane(attributes[1], attributes[2], Double.parseDouble(attributes[3]), Double.parseDouble(attributes[4]), Double.parseDouble(attributes[5]), Double.parseDouble(attributes[6]), Double.parseDouble(attributes[7]), Double.parseDouble(attributes[8]), Integer.parseInt(attributes[9]), Integer.parseInt(attributes[10]));
-              return v;
+              try{
+                  v = new Airplane(attributes[1], attributes[2], Double.parseDouble(attributes[3]), Double.parseDouble(attributes[4]), Double.parseDouble(attributes[5]), Double.parseDouble(attributes[6]), Double.parseDouble(attributes[7]), Double.parseDouble(attributes[8]), Integer.parseInt(attributes[9]), Integer.parseInt(attributes[10]));
+              }
+              catch (Exception e){
+                  System.out.println("Invalid attributes while parsing file.\nError: " + e);
+              }
           }
           else{
               throw new InvalidOperationException("Unknown Vehicle Type");
@@ -66,5 +87,6 @@ public class VehicleFactory {
             throw new InvalidParameterException("Invalid Vehicle Information");
         }
 
+        return v;
     }
 }

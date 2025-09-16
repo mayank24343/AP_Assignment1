@@ -25,7 +25,7 @@ public abstract class WaterVehicle extends Vehicle {
     }
 
     //getter for hasSail (setter not needed, if a ship has sail or not rarely changes)
-    public boolean hasSail(){
+    public boolean getHasSail(){
         return hasSail;
     }
 }

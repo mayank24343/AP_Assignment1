@@ -3,21 +3,40 @@ import Exceptions.*;
 import Interfaces.*;
 
 public class Airplane extends AirVehicle implements FuelConsumable, PassengerCarrier, CargoCarrier, Maintainable {
-    private double fuelLevel;
+    private double fuelLevel = 0;
     private int passengerCapacity = 200;
-    private int currentPassengers;
+    private int currentPassengers = 0;
     private double cargoCapacity = 10000;
-    private double currentCargo;
+    private double currentCargo = 0;
     private boolean maintenanceNeeded = false;
 
     //constructor
-    public Airplane(String id, String model, double maxspeed, double currentMileage, double maxAltitude, double fuelLevel, double cargoCapacity, double currentCargo, int passengerCapacity, int currentPassengers) {
+    public Airplane(String id, String model, double maxspeed, double currentMileage, double maxAltitude, double fuelLevel, double cargoCapacity, double currentCargo, int passengerCapacity, int currentPassengers) throws InvalidOperationException{
         super(id,model,maxspeed,currentMileage,maxAltitude);
+        if (fuelLevel < 0 || maxspeed < 0 || currentCargo < 0 || cargoCapacity < 0  || maxAltitude <= 0 || currentMileage < 0 || passengerCapacity < 0 || currentPassengers < 0) {
+            throw new InvalidOperationException("Invalid parameters");
+        }
         this.fuelLevel = fuelLevel;
         this.passengerCapacity = passengerCapacity;
         this.currentPassengers = currentPassengers;
         this.cargoCapacity = cargoCapacity;
         this.currentCargo = currentCargo;
+        if (currentMileage > 10000) {
+            scheduleMaintenance();
+        }
+    }
+
+    public Airplane(String id, String model, double maxspeed, double currentMileage, double maxAltitude, double cargoCapacity, int passengerCapacity) {
+        super(id,model,maxspeed,currentMileage,maxAltitude);
+        this.passengerCapacity = passengerCapacity;
+        this.cargoCapacity = cargoCapacity;
+        if (currentMileage > 10000) {
+            scheduleMaintenance();
+        }
+    }
+
+    public Airplane(String id, String model, double maxspeed, double currentMileage, double maxAltitude) {
+        super(id,model,maxspeed,currentMileage,maxAltitude);
         if (currentMileage > 10000) {
             scheduleMaintenance();
         }
@@ -31,17 +50,17 @@ public class Airplane extends AirVehicle implements FuelConsumable, PassengerCar
         }
         consumeFuel(distance);
         setCurrentMileage(getCurrentMileage() + distance);
+        System.out.println("Vehicle ID:"+this.getId()+": Flying at "+getMaxAltitude()+" ...");
         if (getCurrentMileage() > 10000){
             scheduleMaintenance();
         }
-        System.out.println("Vehicle ID:"+this.getId()+": Flying at"+getMaxAltitude()+" ...");
     }
 
     //CargoCarrier Interface
     @Override
     public void loadCargo(double weight) throws OverloadException {
         if (weight > cargoCapacity-currentCargo) {
-            throw new OverloadException("Weight limit esceeded.");
+            throw new OverloadException("Cargo weight limit exceeded.");
         }
         currentCargo += weight;
     }
@@ -49,7 +68,7 @@ public class Airplane extends AirVehicle implements FuelConsumable, PassengerCar
     @Override
     public void unloadCargo(double weight) throws InvalidOperationException {
         if (weight > currentCargo){
-            throw new InvalidOperationException("Can't unload more than what was loaded.");
+            throw new InvalidOperationException("Insufficient cargo to unload.");
         }
         currentCargo -= weight;
 
@@ -69,7 +88,7 @@ public class Airplane extends AirVehicle implements FuelConsumable, PassengerCar
     @Override
     public void refuel(double amount) throws InsufficientFuelException {
         if (amount <= 0){
-            throw new InsufficientFuelException("Amount must be greater than 0.");
+            throw new InsufficientFuelException("Refuel amount must be greater than 0.");
         }
 
         fuelLevel += amount;
@@ -94,7 +113,7 @@ public class Airplane extends AirVehicle implements FuelConsumable, PassengerCar
     @Override
     public void scheduleMaintenance() {
         maintenanceNeeded = true;
-        System.out.println("Maintenance scheduled.");
+        System.out.println("Vehicle ID:"+this.getId()+": Maintenance scheduled.");
 
     }
 
@@ -107,7 +126,7 @@ public class Airplane extends AirVehicle implements FuelConsumable, PassengerCar
     public void performMaintenance() {
         maintenanceNeeded = false;
         setCurrentMileage(0);
-        System.out.println("Maintenance performed.");
+        System.out.println("Vehicle ID:"+this.getId()+": Maintenance performed.");
 
     }
 
@@ -115,7 +134,7 @@ public class Airplane extends AirVehicle implements FuelConsumable, PassengerCar
     @Override
     public void boardPassengers(int count) throws OverloadException {
         if (count > passengerCapacity - currentPassengers) {
-            throw new OverloadException("TOO many passengers.");
+            throw new OverloadException("Passenger Limit Exceeded.");
         }
         currentPassengers += count;
 
@@ -124,7 +143,7 @@ public class Airplane extends AirVehicle implements FuelConsumable, PassengerCar
     @Override
     public void disembarkPassengers(int count) throws InvalidOperationException {
         if (count > currentPassengers) {
-            throw new InvalidOperationException("not enough passengers.");
+            throw new InvalidOperationException("Insufficient passengers to disembark.");
         }
         currentPassengers -= count;
     }
@@ -146,6 +165,6 @@ public class Airplane extends AirVehicle implements FuelConsumable, PassengerCar
 
     @Override
     public String toCSV(){
-        return String.format("Airplane,%s,%s,%f,%f,%f,%f,%d,%d,%f,%f,%b",super.getId(),super.getModel(),super.getMaxSpeed(),super.getCurrentMileage(),super.getMaxAltitude(),fuelLevel,passengerCapacity,currentPassengers,cargoCapacity,currentCargo,maintenanceNeeded);//id,model,maxspeed,mileage,maxaltitude,fuellevel,passnegercapacity,currentpassengers,cargocapacity,currentcargo,maintenanceneeded
+        return String.format("Airplane,%s,%s,%f,%f,%f,%f,%d,%d,%f,%f,%b\n",super.getId(),super.getModel(),super.getMaxSpeed(),super.getCurrentMileage(),super.getMaxAltitude(),fuelLevel,passengerCapacity,currentPassengers,cargoCapacity,currentCargo,maintenanceNeeded);//id,model,maxspeed,mileage,maxaltitude,fuellevel,passnegercapacity,currentpassengers,cargocapacity,currentcargo,maintenanceneeded
     }
 }
