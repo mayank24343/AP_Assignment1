@@ -11,9 +11,9 @@ public class FleetManager {
     private ArrayList<Vehicle> fleet = new ArrayList<>();
 
     //constructor
-    FleetManager() {}
+    public FleetManager() {}
 
-    void addVehicle(Vehicle v) {
+    public void addVehicle(Vehicle v) throws InvalidOperationException{
         for (Vehicle vehicle : fleet) {
             if (vehicle.getId().compareTo(v.getId()) == 0){
                 throw new InvalidOperationException("Vehicle with this ID already exists.");
@@ -22,7 +22,7 @@ public class FleetManager {
         fleet.add(v);
     }
 
-    void removeVehicle(String id) {
+    public void removeVehicle(String id) throws InvalidOperationException{
         for (Vehicle vehicle : fleet) {
             if (vehicle.getId().compareTo(id) == 0){
                 fleet.remove(vehicle);
@@ -33,7 +33,7 @@ public class FleetManager {
         throw new InvalidOperationException("Vehicle with this ID has not been found.");
     }
 
-    void maintainAll(){
+    public void maintainAll(){
         for (Vehicle v : fleet) {
             if (((Maintainable) v).needsMaintenance()){
                 ((Maintainable) v).performMaintenance();
@@ -41,13 +41,13 @@ public class FleetManager {
         }
     }
 
-    void startAllJourneys(double distance){
+    public void startAllJourneys(double distance){
         for (Vehicle v : fleet) {
             v.move(distance);
         }
     }
 
-    double getTotalFuelConsumption(double distance){
+    public double getTotalFuelConsumption(double distance){
         double totalFuelConsumption = 0;
         for (Vehicle v : fleet) {
             if ((v instanceof CargoShip) && ((CargoShip) v).getHasSail()) {
@@ -69,11 +69,12 @@ public class FleetManager {
         return vehicles;
     }
 
-    void sortFleetByEfficiency(){
+    public void sortFleetByEfficiency(){
         Collections.sort(fleet);
+        System.out.print("Fleet Sorted By Efficiency!");
     }
 
-    String generateReport(){
+    public String generateReport(){
         String report = "";
         int totalvehicles = fleet.size();
         int totalCars=0, totalTrucks=0, totalBusses=0, totalAirplanes=0, totalCargoships=0;
@@ -108,7 +109,7 @@ public class FleetManager {
         return report;
     }
 
-    List<Vehicle> getVehiclesNeedingMaintenance(){
+    public List<Vehicle> getVehiclesNeedingMaintenance(){
         List<Vehicle> vehicles = new ArrayList<>();
         for (Vehicle v : fleet) {
             if (((Maintainable) v).needsMaintenance()){
@@ -119,7 +120,7 @@ public class FleetManager {
         return vehicles;
     }
 
-    void saveToFile(String filename){
+    public void saveToFile(String filename){
         try (FileWriter fw = new FileWriter(filename)){
             for (Vehicle v : fleet) {
                 fw.write(v.toCSV());
@@ -132,10 +133,11 @@ public class FleetManager {
 
     }
 
-    void loadFromFile(String filename){
+    public void loadFromFile(String filename){
         try (BufferedReader br = new BufferedReader(new FileReader(filename))){
             String l = br.readLine();
             while (l != null){
+                System.out.println(l);
                 //create vehicle using factory method
                 try {
                     Vehicle v = VehicleFactory.createFromCSV(l);
@@ -143,6 +145,7 @@ public class FleetManager {
                     l = br.readLine();
                 }
                 catch (Exception e){
+                    l = br.readLine();
                     System.out.println("Error reading from file-Data incorrect/not arranged as expected.\nError: "+e+"\n");
                 }
             }
@@ -152,11 +155,108 @@ public class FleetManager {
         }
     }
 
-    void refuelAll(double amount){
+    public void refuelAll(double amount){
         for (Vehicle v : fleet) {
             if (v instanceof FuelConsumable){
                 ((FuelConsumable) v).refuel(amount);
             }
         }
     }
+
+    public void boardPassengers(String id, int passengers) throws InvalidOperationException, OverloadException{
+        for (Vehicle vehicle : fleet) {
+            if (vehicle.getId().compareTo(id) == 0){
+                if (vehicle instanceof PassengerCarrier){
+                    if (passengers >= 0) {
+                        ((PassengerCarrier) vehicle).boardPassengers(passengers);
+                    }
+                    else{
+                        throw new InvalidOperationException("Cannot have negative passengers.");
+                    }
+                }
+                else{
+                    throw new  InvalidOperationException("Vehicle does not support passengers.");
+                };
+                return;
+            }
+        }
+
+        throw new InvalidOperationException("Vehicle with this ID has not been found.");
+    }
+
+    public void disembarkPassengers(String id, int passengers) throws InvalidOperationException{
+        for (Vehicle vehicle : fleet) {
+            if (vehicle.getId().compareTo(id) == 0){
+                if (vehicle instanceof PassengerCarrier){
+                    if (passengers >= 0) {
+                        ((PassengerCarrier) vehicle).disembarkPassengers(passengers);
+                    }
+                    else{
+                        throw new InvalidOperationException("Cannot have negative passengers.");
+                    }
+                }
+                else{
+                    throw new  InvalidOperationException("Vehicle does not support passengers.");
+                };
+                return;
+            }
+        }
+
+        throw new InvalidOperationException("Vehicle with this ID has not been found.");
+    }
+
+    public void loadCargo(String id, double cargo) throws  InvalidOperationException, OverloadException{
+        for (Vehicle vehicle : fleet) {
+            if (vehicle.getId().compareTo(id) == 0){
+                if (vehicle instanceof CargoCarrier){
+                    if (cargo >= 0) {
+                        ((CargoCarrier) vehicle).loadCargo(cargo);
+                    }
+                    else{
+                        throw new InvalidOperationException("Cannot have negative cargo.");
+                    }
+                }
+                else{
+                    throw new  InvalidOperationException("Vehicle does not support cargo.");
+                };
+                return;
+            }
+        }
+
+        throw new InvalidOperationException("Vehicle with this ID has not been found.");
+    }
+
+    public void unloadCargo(String id, double cargo) throws  InvalidOperationException{
+        for (Vehicle vehicle : fleet) {
+            if (vehicle.getId().compareTo(id) == 0){
+                if (vehicle instanceof CargoCarrier){
+                    if (cargo >= 0) {
+                        ((CargoCarrier) vehicle).unloadCargo(cargo);
+                    }
+                    else{
+                        throw new InvalidOperationException("Cannot have negative cargo.");
+                    }
+                }
+                else{
+                    throw new  InvalidOperationException("Vehicle does not support cargo.");
+                };
+                return;
+            }
+        }
+
+        throw new InvalidOperationException("Vehicle with this ID has not been found.");
+    }
+
+    public double estimateJourneyTime(String id, double distance) throws InvalidOperationException{
+        for (Vehicle vehicle : fleet) {
+            if (vehicle.getId().compareTo(id) == 0){
+                return vehicle.estimateJourneyTime(distance);
+            }
+        }
+
+        throw new InvalidOperationException("Vehicle with this ID has not been found.");
+
+
+    }
+
 }

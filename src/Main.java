@@ -1,7 +1,4 @@
-package FleetManagerMain;
-
-import Exceptions.InvalidOperationException;
-import Interfaces.*;
+import FleetManagerMain.FleetManager;
 import Vehicles.*;
 
 import java.util.List;
@@ -11,18 +8,20 @@ public class Main {
     private static FleetManager FM = new FleetManager();
 
     public static void main(String[] args) {
+        //FM.loadFromFile("test.csv");
+        //FM.sortFleetByEfficiency();
         CLI();
     }
 
     public static void CLI(){
-        String menu = "MENU\n1. Add Vehicle\n2. Remove Vehicle\n3. Start Journey\n4. Refuel All\n5. Perform Maintenance\n6. Generate Report\n7. Save Fleet\n8. Load Fleet\n9. Search by Type\n10. List Vehicles Needing Maintenance\n11.Fuel Consumption in Journey\n12.Exit\nPlease Enter Your Choice Number: ";
+        String menu = "MENU\n1. Add Vehicle\n2. Remove Vehicle\n3. Start Journey\n4. Refuel All\n5. Perform Maintenance\n6. Generate Report\n7. Save Fleet\n8. Load Fleet\n9. Search by Type\n10. List Vehicles Needing Maintenance\n11. Fuel Consumption in Journey\n12. Sort Fleet by Efficiency\n13. Add Passengers by Vehicle ID\n14. Disembark Passengers by Vehicle ID\n15. Load Cargo by Vehicle\n16. Unload Cargo by Vehicle ID\n17. Estimate Journey Time by Vehicle ID\n18. Exit\nPlease Enter Your Choice Number: ";
         Scanner input = new Scanner(System.in);
         while (true){
             System.out.println(menu);
             if (input.hasNextInt()){
                 int i = input.nextInt();
                 input.nextLine();
-                if (i >= 1 && i<= 12){
+                if (i >= 1 && i<= 18){
                     //these simply return
                     if (i == 5){
                         System.out.println("PERFORM MAINTENANCE\n");
@@ -508,6 +507,140 @@ public class Main {
                         else{
                             System.out.println("Invalid Input.\n");
                             input.nextLine();
+                        }
+                    }
+                    else if (i == 12){
+                        FM.sortFleetByEfficiency();
+                        System.out.println("Fleet Sorted by Efficiency!");
+                    }
+                    else if (i == 13){
+                        System.out.println("BOARD PASSENGERS VEHICLE\nEnter Vehicle ID: ");
+                        if (input.hasNextLine()){
+                            String id = input.nextLine();
+                            System.out.println("Enter number of passengers to board: ");
+                            int passengers=0;
+                            if (input.hasNextInt()){
+                                passengers = input.nextInt();
+                                input.nextLine();
+                                try {
+                                    FM.boardPassengers(id,passengers);
+                                    System.out.println("Boarded passengers in vehicle: " + id);
+                                }
+                                catch (Exception e){
+                                    System.out.println("Could not board passengers!\nError:"+e+"\n");
+                                }
+                            }
+                            else{
+                                input.nextLine();
+                                System.out.println("Invalid Input.\n");
+                            }
+                        }
+                        else{
+                            System.out.println("Invalid Input.\n");
+                        }
+                    }
+                    else if (i == 14){
+                        System.out.println("DISEMBARK PASSENGERS VEHICLE\nEnter Vehicle ID: ");
+                        if (input.hasNextLine()){
+                            String id = input.nextLine();
+                            int passengers=0;
+                            System.out.println("Enter number of passengers to disembark: ");
+                            if (input.hasNextInt()){
+                                passengers = input.nextInt();
+                                input.nextLine();
+                                try {
+                                    FM.disembarkPassengers(id,passengers);
+                                    System.out.println("Disembarked passengers from vehicle: " + id);
+                                }
+                                catch (Exception e){
+                                    System.out.println("Could not disembark passengers!\nError:"+e+"\n");
+                                }
+                            }
+                            else{
+                                input.nextLine();
+                                System.out.println("Invalid Input.\n");
+                            }
+                        }
+                        else{
+                            System.out.println("Invalid Input.\n");
+                        }
+                    }
+                    else if (i == 15){
+                        System.out.println("LOAD CARGO VEHICLE\nEnter Vehicle ID: ");
+                        if (input.hasNextLine()){
+                            String id = input.nextLine();
+                            System.out.println("Enter amount of cargo to load: ");
+                            double cargo=0;
+                            if (input.hasNextDouble()){
+                                cargo= input.nextDouble();
+                                input.nextLine();
+                                try {
+                                    FM.loadCargo(id,cargo);
+                                    System.out.println("Loaded cargo to vehicle: " + id);
+                                }
+                                catch (Exception e){
+                                    System.out.println("Could not load cargo!\nError:"+e+"\n");
+                                }
+                            }
+                            else{
+                                input.nextLine();
+                                System.out.println("Invalid Input.\n");
+                            }
+                        }
+                        else{
+                            System.out.println("Invalid Input.\n");
+                        }
+                    }
+                    else if (i == 16){
+                        System.out.println("UNLOAD CARGO VEHICLE\nEnter Vehicle ID: ");
+                        if (input.hasNextLine()){
+                            String id = input.nextLine();
+                            System.out.println("Enter amount of cargo to unload: ");
+                            double cargo=0;
+                            if (input.hasNextDouble()){
+                                cargo= input.nextDouble();
+                                input.nextLine();
+                                try {
+                                    FM.unloadCargo(id,cargo);
+                                    System.out.println("Unloaded cargo from vehicle: " + id);
+                                }
+                                catch (Exception e){
+                                    System.out.println("Could not unload cargo!\nError:"+e+"\n");
+                                }
+                            }
+                            else{
+                                input.nextLine();
+                                System.out.println("Invalid Input.\n");
+                            }
+                        }
+                        else{
+                            System.out.println("Invalid Input.\n");
+                        }
+                    }
+                    else if (i == 17){
+                        System.out.println("ESTIMATE JOURNEY TIME\nEnter Vehicle ID: ");
+                        if (input.hasNextLine()){
+                            String id = input.nextLine();
+                            System.out.println("Enter distance: ");
+                            double distance=0;
+                            if (input.hasNextDouble()){
+                                distance= input.nextDouble();
+                                input.nextLine();
+                                try {
+                                    double estimate = FM.estimateJourneyTime(id,distance);
+                                    System.out.println("Estimated time: " + estimate);
+                                }
+                                catch (Exception e){
+                                    System.out.println("Could estimate!\nError:"+e+"\n");
+                                }
+                            }
+                            else{
+                                input.nextLine();
+                                System.out.println("Invalid Input.\n");
+                            }
+                        }
+                        else{
+                            System.out.println("Invalid Input.\n");
                         }
                     }
                     else{

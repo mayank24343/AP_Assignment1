@@ -32,7 +32,7 @@ public class VehicleFactory {
                   }
               }
               try {
-                  v = new Bus(attributes[1], attributes[2], Double.parseDouble(attributes[3]), Double.parseDouble(attributes[4]), Integer.parseInt(attributes[5]), Double.parseDouble(attributes[6]), Double.parseDouble(attributes[7]), Double.parseDouble(attributes[8]), Integer.parseInt(attributes[9]), Integer.parseInt(attributes[10]));
+                  v = new Bus(attributes[1], attributes[2], Double.parseDouble(attributes[3]), Double.parseDouble(attributes[4]), Integer.parseInt(attributes[5]), Double.parseDouble(attributes[6]), Double.parseDouble(attributes[9]), Double.parseDouble(attributes[10]), Integer.parseInt(attributes[7]), Integer.parseInt(attributes[8]));
               }
               catch (Exception e){
                   System.out.println("Invalid attributes while parsing file.\nError: " + e);
@@ -72,7 +72,7 @@ public class VehicleFactory {
                   }
               }
               try{
-                  v = new Airplane(attributes[1], attributes[2], Double.parseDouble(attributes[3]), Double.parseDouble(attributes[4]), Double.parseDouble(attributes[5]), Double.parseDouble(attributes[6]), Double.parseDouble(attributes[7]), Double.parseDouble(attributes[8]), Integer.parseInt(attributes[9]), Integer.parseInt(attributes[10]));
+                  v = new Airplane(attributes[1], attributes[2], Double.parseDouble(attributes[3]), Double.parseDouble(attributes[4]), Double.parseDouble(attributes[5]), Double.parseDouble(attributes[6]), Double.parseDouble(attributes[9]), Double.parseDouble(attributes[10]), Integer.parseInt(attributes[7]), Integer.parseInt(attributes[8]));
               }
               catch (Exception e){
                   System.out.println("Invalid attributes while parsing file.\nError: " + e);
