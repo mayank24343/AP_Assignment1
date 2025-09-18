@@ -86,7 +86,7 @@ public class CargoShip extends WaterVehicle implements CargoCarrier, Maintainabl
 
     @Override
     public double getFuelLevel() throws InvalidOperationException {
-        if (!getHasSail()){
+        if (getHasSail()){
             throw new InvalidOperationException("Ship doesn't use fuel. Uses sail.");
         }
         return fuelLevel;
@@ -94,7 +94,7 @@ public class CargoShip extends WaterVehicle implements CargoCarrier, Maintainabl
 
     @Override
     public double consumeFuel(double distance) throws InsufficientFuelException, InvalidOperationException {
-        if (!getHasSail()){
+        if (getHasSail()){
             throw new InvalidOperationException("Ship doesn't use fuel. Uses sail.");
         }
 

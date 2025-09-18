@@ -128,7 +128,7 @@ public class Truck extends LandVehicle implements FuelConsumable, CargoCarrier, 
     public void performMaintenance() {
         maintenanceNeeded = false;
         setCurrentMileage(0);
-        System.out.println("Vehicle ID:"+this.getId()+": Maintenance scheduled.");
+        System.out.println("Vehicle ID:"+this.getId()+": Maintenance performed.");
     }
 
     @Override

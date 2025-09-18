@@ -397,7 +397,7 @@ public class Main {
                                 FM.startAllJourneys(x);
                             }
                             catch (Exception e){
-                                System.out.println("Could not move all vehicles by distance %d!\nError:"+e+"\n");
+                                System.out.println("Could not move all vehicles by distance!\nError:"+e+"\n");
                             }
                         }
                         else{
@@ -413,6 +413,7 @@ public class Main {
                             input.nextLine();
                             try {
                                 FM.refuelAll(amount);
+                                System.out.println("Refueled all vehicles!\n");
                             }
                             catch (Exception e){
                                 System.out.println("Could not refuel all!\nError:"+e+"\n");

@@ -104,7 +104,7 @@ public class FleetManager {
             }
         }
 
-        report = String.format("Total Vehicles: %d\nTotal Cars: %d\nTotal Trucks: %d\nTotal Busses: %d\nTotal Airplanes: %d\nTotal Cargo Ships: %d\nAverage Fuel Efficiency: %f\nTotal Mileage: %f\nTotal Vehicles Needing Maintenance: %d", totalvehicles, totalCars, totalTrucks, totalBusses, totalAirplanes, totalCargoships, efficiencySum/totalvehicles, totalMileage,  needMaintenance);
+        report = String.format("Total Vehicles: %d\nTotal Cars: %d\nTotal Trucks: %d\nTotal Busses: %d\nTotal Airplanes: %d\nTotal Cargo Ships: %d\nAverage Fuel Efficiency: %f\nTotal Mileage: %f\nTotal Vehicles Needing Maintenance: %d", totalvehicles, totalCars, totalTrucks, totalBusses, totalAirplanes, totalCargoships, (totalvehicles > 0) ? efficiencySum/totalvehicles : 0, totalMileage,  needMaintenance);
 
         return report;
     }
@@ -137,7 +137,6 @@ public class FleetManager {
         try (BufferedReader br = new BufferedReader(new FileReader(filename))){
             String l = br.readLine();
             while (l != null){
-                System.out.println(l);
                 //create vehicle using factory method
                 try {
                     Vehicle v = VehicleFactory.createFromCSV(l);
